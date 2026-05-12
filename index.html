@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RotVLA</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-soft: #f7f7f8;
+      --text: #18181b;
+      --muted: #71717a;
+      --line: #e4e4e7;
+      --card: #ffffff;
+      --dark: #111111;
+      --shadow: 0 10px 30px rgba(0,0,0,0.06);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .section { padding: 72px 0; }
+    .section.soft {
+      background: var(--bg-soft);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero {
+      padding: 84px 0 64px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .badge {
+      display: inline-block;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 14px;
+      color: var(--muted);
+      font-size: 14px;
+      background: #fff;
+    }
+
+    h1 {
+      font-size: clamp(34px, 5.5vw, 52px);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin: 18px 0 0;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: clamp(28px, 4vw, 40px);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin: 0 0 18px;
+      text-align: center; 
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+
+    .hero p.lead {
+      max-width: 900px;
+      margin: 24px auto 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 20px;
+    }
+
+    .center { text-align: center; }
+
+    .authors {
+      margin-top: 28px;
+      font-size: 18px;
+      line-height: 1.7;
+      color: #2563eb;
+      text-align: center;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 28px;
+    }
+
+    .author-link {
+      color: #2563eb;
+      transition: color 0.2s ease;
+    }
+
+    .author-link:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .institution {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 18px;
+      text-align: center;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 9px 16px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-weight: 600;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+    .btn.primary {
+      background: #fff;
+      color: inherit;
+      border-color: var(--line);
+    }
+
+    .video-box, .code-box, .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .video-box video {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: transparent;
+    }
+    .figure {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+    }
+    .placeholder {
+      width: 100%;
+      aspect-ratio: 16 / 8;
+      background: linear-gradient(135deg, #f1f5f9, #e4e4e7);
+    }
+
+    .placeholder.squareish { aspect-ratio: 4 / 3; }
+    .placeholder.wide { aspect-ratio: 16 / 10; }
+    .placeholder.video { aspect-ratio: 16 / 9; background: #111; }
+
+    .caption {
+      color: var(--muted);
+      text-align: center;
+      margin: 14px auto 0;
+      max-width: 880px;
+      font-size: 15px;
+    }
+
+    .figure-block {
+      display: grid;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .figure-panel {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      border-radius: 0;
+      overflow: visible;
+      padding: 0;
+    }
+
+    .figure-label {
+      font-size: 15px;
+      color: var(--text);
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    .figure-caption {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 36px;
+      align-items: start;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .metric {
+      padding: 28px;
+    }
+
+    .metric .value {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .metric .label {
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 15px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .mini-card {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 20px;
+      background: #fff;
+    }
+
+    .text {
+      color: #3f3f46;
+      font-size: 18px;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 28px;
+    }
+
+    .panel {
+      padding: 16px;
+    }
+
+    .panel p {
+      color: var(--muted);
+      font-size: 15px;
+      margin: 14px 4px 4px;
+    }
+
+    .code-box {
+      background: #0f172a;
+      color: #e5e7eb;
+      padding: 24px;
+      overflow-x: auto;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 15px;
+      line-height: 1.7;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 28px 0 40px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2, .grid-3, .grid-4, .results-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section { padding: 56px 0; }
+      .hero { padding: 64px 0 48px; }
+      .text { font-size: 17px; }
+      .hero p.lead { font-size: 18px; }
+    }
+  
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+      z-index: 100;
+    }
+
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      font-weight: 500;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px; /* more spacing */
+      font-size: 16px; /* bigger text */
+      color: var(--muted);
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="container nav-inner">
+      <div>
+        <img src="assets/logo.png" alt="RotVLA" style="height:44px; object-fit:contain;" />
+      </div>
+      <div class="nav-links">
+        <a href="#">Home</a>
+        <a href="#method">Method</a>
+        <a href="#simresults">Experiments</a>
+        <a href="#analysis">Analysis</a>
+        <a href="#bibtex">BibTeX</a>
+      </div>
+    </div>
+  </div>
+  <header class="section soft">
+    <div class="container center">
+      
+      <h1>RotVLA: Rotational Latent Action for Vision-Language-Action Model</h1>
+      
+      <div class="authors">
+        <a class="author-link" href="https://qiweili00.github.io/" target="_blank" rel="noopener noreferrer">Qiwei Li<sup>1</sup></a>,
+        <a class="author-link" href="https://example.com/author2" target="_blank" rel="noopener noreferrer">Xicheng Gong<sup>1</sup></a>,
+        <a class="author-link" href="https://scholar.google.com/citations?user=laOWyTQAAAAJ&hl=zh-CN" target="_blank" rel="noopener noreferrer">Xinghang Li<sup>2</sup></a>,
+        <a class="author-link" href="https://example.com/author4" target="_blank" rel="noopener noreferrer">Quanyun Zhou<sup>2</sup></a>,
+        <a class="author-link" href="https://scholar.google.com/citations?user=68tXhe8AAAAJ&hl=zh-CN&oi=ao" target="_blank" rel="noopener noreferrer">Hangjun Ye<sup>2</sup></a>,
+        <a class="author-link" href="https://zhoujiahuan1991.github.io/" target="_blank" rel="noopener noreferrer">Jiahuan Zhou<sup>1*</sup></a>,
+        <a class="author-link" href="http://www.muyadong.com/" target="_blank" rel="noopener noreferrer">Yadong Mu<sup>1*</sup></a>
+      </div>
+
+      <div class="institution"><sup>1</sup>Wangxuan Institute of Computer Technology, Peking University<br /><sup>2</sup>Xiaomi Robotics</div>
+      <div class="institution" style="font-size:16px; margin-top:8px;"><sup>*</sup>Corresponding author</div>
+      
+      <div class="actions">
+        <a class="btn primary" href="https://example.com/paper" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1.5V8h4.5L14 3.5zM8 13h8v1.5H8V13zm0 3h8v1.5H8V16zm0-6h4v1.5H8V10z"/></svg>
+          Paper
+        </a>
+        <a class="btn" href="https://example.com/code" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2.02c-3.2.7-3.87-1.54-3.87-1.54-.52-1.32-1.27-1.67-1.27-1.67-1.04-.7.08-.69.08-.69 1.15.08 1.75 1.18 1.75 1.18 1.02 1.75 2.67 1.25 3.32.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.27-5.24-5.64 0-1.25.45-2.28 1.18-3.08-.12-.3-.51-1.5.11-3.13 0 0 .97-.31 3.18 1.18a11.1 11.1 0 012.9-.39c.99 0 1.99.13 2.9.39 2.2-1.5 3.17-1.18 3.17-1.18.63 1.63.24 2.83.12 3.13.73.8 1.18 1.83 1.18 3.08 0 4.38-2.7 5.34-5.27 5.63.41.35.77 1.04.77 2.1v3.12c0 .3.2.66.79.55A10.51 10.51 0 0023.5 12C23.5 5.73 18.27.5 12 .5z"/></svg>
+          Code
+        </a>
+        <a class="btn" href="https://example.com/checkpoints" target="_blank" rel="noopener noreferrer">
+          <span style="font-size:16px; margin-right:6px; vertical-align:middle;">&#129303;</span>
+          Checkpoints
+        </a>
+        <a class="btn" href="https://example.com/datasets" target="_blank" rel="noopener noreferrer">
+          📊 Datasets
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="figure">
+        <img src="assets/pipeline.png" />
+
+      </div>
+      <p class="caption">
+        <strong>Figure 1.</strong> Replace this teaser area with your main overview figure.
+        A strong teaser should show the task setting, the core idea, and the main takeaway at a glance.
+      </p>
+    </div>
+  </section>
+
+  <section class="section soft">
+    <div class="container grid">
+      <div>
+        <h2>Abstract</h2>
+        <p class="text">
+          We introduce RotVLA, a vision-language-action framework built on a continuous rotational latent
+          action representation. By replacing discrete latent tokens with structured continuous rotations
+          and introducing a triplet learning objective, our method learns transferable motion dynamics from
+          heterogeneous data sources. Built upon a pretrained vision-language model with an action expert,
+          RotVLA uses latent actions as high-level planning signals that guide embodiment-specific control.
+          Experiments in simulation and real-world manipulation demonstrate strong generalization and competitive performance.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="method">
+    <div class="container grid-2">
+      <div>
+        <h2>Method</h2>
+        <p class="text">
+          RotVLA combines a pretrained VLM backbone, a latent action model, and a unified action expert.
+          The key idea is to represent actions using continuous rotations, preserving geometric structure
+          and continuity while enabling learning across diverse embodiments and data sources.
+        </p>
+
+        <div class="stack">
+          <div class="mini-card">
+            <h3>1. Rotational Latent Action</h3>
+            <div class="text" style="font-size:16px;">
+              Replace discrete quantized latents with continuous rotations in SO(n) to improve structure and transferability.
+            </div>
+          </div>
+          <div class="mini-card">
+            <h3>2. Triplet Learning Objective</h3>
+            <div class="text" style="font-size:16px;">
+              Encourage temporal compositionality and prevent degeneration into trivial frame reconstruction.
+            </div>
+          </div>
+          <div class="mini-card">
+            <h3>3. Unified Action Expert</h3>
+            <div class="text" style="font-size:16px;">
+              Jointly denoise latent actions and robot actions so that latent plans can guide downstream control.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="figure">
+          <div class="placeholder squareish"></div>
+        </div>
+        <p class="caption" style="text-align:left; max-width:none; margin-top:12px;">
+          Replace this with your method overview figure, model diagram, or training pipeline.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section soft" id="simresults">
+    <div class="container">
+      <h2>Results</h2>
+
+      <div class="grid-4" style="margin-top: 24px;">
+        <div class="card metric">
+          <div class="value">98.2%</div>
+          <div class="label">LIBERO Results</div>
+        </div>
+        <div class="card metric">
+          <div class="value">88.84%</div>
+          <div class="label">RoboTwin2.0 Results (Clean)</div>
+        </div>
+        <div class="card metric">
+          <div class="value">87.54%</div>
+          <div class="label">RoboTwin2.0 Results (Randomized)</div>
+        </div>
+        <div class="card metric">
+          <div class="value">1.7B</div>
+          <div class="label">Model Parameters</div>
+        </div>
+      </div>
+
+      <div class="figure" style="margin-top: 28px; max-width: 80%; margin-left: auto; margin-right: auto;">
+        <img src="assets/sim_results.png" alt="Simulation benchmark and qualitative results." />
+      </div>
+      <p class="caption">
+        <strong>Figure 2.</strong> Evaluation on simulation benchmarks (LIBERO and RoboTwin2.0).
+      </p>
+    </div>
+  </section>
+
+  <section class="section soft" id="realworld">
+    <div class="container" style="max-width: 1100px;">
+      <h2>Real-World Experiments</h2>
+      <!-- <p class="caption" style="text-align:left; max-width:none; margin-bottom:20px;">
+        Each row corresponds to one task. Each video shows a different trial or viewpoint.
+      </p> -->
+
+      <!-- Row 1 -->
+      <div class="results-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom:24px;">
+        <div class="video-box"><video controls muted playsinline preload="metadata" src="assets/pick/clean_2_web.mp4"></video></div>
+        <div class="video-box"><video controls muted playsinline preload="metadata" src="assets/pick/random_2_web.mp4"></video></div>
+        <div class="video-box"><video controls muted playsinline preload="metadata" src="assets/pick/random_3_web.mp4"></video></div>
+      </div>
+      <p class="caption">Task 1: Pick up the block and place it on the plate (1x speed).</p>
+
+      <!-- Row 2 -->
+      <div class="results-grid" style="grid-template-columns: repeat(3, 1fr); margin-top:20px; margin-bottom:24px;">
+        <div class="video-box"><video controls muted playsinline preload="metadata" src="assets/drawer/clean_1_web.mp4"></video></div>
+        <div class="video-box"><video controls muted playsinline preload="metadata" src="assets/drawer/random_1_web.mp4"></video></div>
+        <div class="video-box"><video controls muted playsinline preload="metadata" src="assets/drawer/random_3_web.mp4"></video></div>
+      </div>
+      <p class="caption">Task 2: Put the block into the drawer and close the drawer (1x speed).</p>
+
+      <!-- Row 3 -->
+      <div class="results-grid" style="grid-template-columns: repeat(3, 1fr); margin-top:20px;">
+        <div class="video-box"><video controls muted playsinline preload="metadata" src="assets/stack/clean_1_web.mp4"></video></div>
+        <div class="video-box"><video controls muted playsinline preload="metadata" src="assets/stack/random_2_web.mp4"></video></div>
+        <div class="video-box"><video controls muted playsinline preload="metadata" src="assets/stack/random_3_web.mp4"></video></div>
+      </div>
+      <p class="caption">Task 3: Put the yellow cup into the red cup, then place the green cup into the yellow cup (1x speed).</p>
+    </div>
+  </section>
+
+  
+
+  <section class="section " id="analysis">
+    <div class="container" style="max-width: 980px;">
+      <h2>Latent Action Analysis</h2>
+
+      <div class="figure-block">
+        <div class="figure-panel">
+          <div class="figure">
+            <img src="assets/latent_action_vis.png" alt="Latent action visualization." />
+          </div>
+          <p class="caption"><strong>Figure 3.</strong> atent action extracted by one dataset can generalize to
+            other seen dataset (RoboCOIN, RoboMIND) and unseen dataset (LIBERO).</p>
+        </div>
+
+        <div class="figure-panel">
+          <div class="figure">
+            <img src="assets/latent_action_regression.png" alt="Latent action regression results." />
+          </div>
+          <p class="caption"><strong>Figure 4.</strong> Training curves of linear probe loss of latent action on seen datasets (Bridge, Fractal)
+            and unseen dataset (LIBERO). RotVLA converges faster and achieves lower probing loss
+            than UniVLA, indicating stronger latent action representation and generalization.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section soft" id="bibtex">
+    <div class="container" style="max-width: 900px;">
+      <h2>BibTeX</h2>
+      <div class="code-box" style="margin-top: 18px;">
+<pre>@inproceedings{rotvla2026,
+  title     = {RotVLA: Rotational Latent Actions for Learning from Heterogeneous Data},
+  author    = {Author One and Author Two and Author Three and Author Four},
+  booktitle = {Conference Name},
+  year      = {2026}
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="ack">
+    <div class="container" style="max-width: 900px;">
+      <h2>Acknowledgements</h2>
+      <p class="text">
+        We thank our collaborators and colleagues for helpful discussions and support. This work was supported in part by [funding sources], and we acknowledge the use of compute resources from [institution or cluster].
+      </p>
+    </div>
+  </section>
+</body>
+</html>
